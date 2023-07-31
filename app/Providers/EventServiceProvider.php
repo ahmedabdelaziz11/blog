@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
@@ -26,6 +29,25 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        User::saved(function () {
+            Cache::forget('stats');
+        });
+    
+        User::deleted(function () {
+            Cache::forget('stats');
+        });
+    
+        Post::saved(function () {
+            Cache::forget('stats');
+        });
+    
+        Post::deleted(function () {
+            Cache::forget('stats');
+        });
+
+        Post::restored(function () {
+            Cache::forget('stats');
+        });
     }
 
     /**
